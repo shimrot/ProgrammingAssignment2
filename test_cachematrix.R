@@ -52,4 +52,16 @@ runtests <-function()
     message("c="); print(c)
     d <- round(a %*% c, 0.000001)  # get ident (round to remove small calc residuals)
     message("ident="); print(d)
+    
+    message("Test 4: empty matrix")
+    b <- makeCacheMatrix()
+    c <- cacheSolve(b)
+    message("c="); print(c)
+    
+    message("Test 4 repeat")
+    c <- cacheSolve(b)
+    message("c="); print(c)
+    
+    message("Test 5 non decorated matrix passed to cacheSolve")
+    c <- cacheSolve(matrix(1:9, 3, 3))
 }

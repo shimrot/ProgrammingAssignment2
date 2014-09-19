@@ -9,6 +9,7 @@
 ## returns:
 ##    cacheable matrix copy of x
 makeCacheMatrix <- function(x = matrix()) {
+
     # copy of x remains in environment, so don't a new variable
     xI <- NULL 
     set <- function(m) {
@@ -34,19 +35,26 @@ makeCacheMatrix <- function(x = matrix()) {
 ##   * x matrix is invertable
 ##   * x matrix is square
 cacheSolve <- function(x, ...) {
+    if (class(x) != "list" || !("setInverse" %in% names(x))) {
+        warning("cacheSolve argument x is not a cacheMatrix (decorated matrix) object")
+        return(NULL)
+    }
     invX <- x$getInverse()
     if(!is.null(invX)) {
         message("getting cached data")
         return(invX)
     }
     
-    
     data <- x$get()
-    # create identity matrix (so optional args don't accidentally replace
-    # assumes x is square matrix
-    identM <- diag(, nrow(data))
     
-    invX <- solve(data, identM, ...)
-    x$setInverse(invX)
+    # make sure matrix is not empty or only NA val
+    if (nrow(data) > 0 && (nrow(data) > 1 || !is.na(data[1,1]))) {
+        # create identity matrix (so optional args don't accidentally replace
+        # assumes x is square matrix
+        identM <- diag(, nrow(data))   
+        
+        invX <- solve(data, identM, ...)
+        x$setInverse(invX)
+    }
     invX
 }
